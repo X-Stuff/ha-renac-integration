@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="460" viewBox="0 0 960 460" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16">
+  <defs>
+    <marker id="grey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7a8794"/></marker>
+    <marker id="purple" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8e5bd9"/></marker>
+  </defs>
+
+  <rect x="1" y="1" width="958" height="458" rx="16" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="32" y="44" font-size="22" font-weight="600" fill="#8e5bd9">TCP polling</text>
+  <text x="180" y="44" font-size="16" fill="#57606a">Home Assistant asks the inverter through a relay, over Bluetooth; nothing changes on the module</text>
+
+  <!-- Inverter with module -->
+  <rect x="40" y="150" width="170" height="130" rx="12" fill="#fff" stroke="#e07b39" stroke-width="2.5"/>
+  <rect x="66" y="170" width="118" height="56" rx="6" fill="#fdf0e6" stroke="#e07b39" stroke-width="2"/>
+  <path d="M80 200 q14 -16 28 0 t28 0 t28 0" fill="none" stroke="#e07b39" stroke-width="3" stroke-linecap="round"/>
+  <text x="125" y="252" text-anchor="middle" font-weight="600" fill="#24292f">Inverter</text>
+  <rect x="230" y="178" width="130" height="74" rx="10" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <line x1="210" y1="215" x2="230" y2="215" stroke="#57606a" stroke-width="3"/>
+  <line x1="340" y1="178" x2="340" y2="152" stroke="#2f9e8f" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="340" cy="149" r="4" fill="#2f9e8f"/>
+  <text x="295" y="210" text-anchor="middle" font-weight="600" fill="#24292f">WiFi module</text>
+  <text x="295" y="230" text-anchor="middle" font-size="13" fill="#57606a">HF-LPT270</text>
+
+  <!-- Module -> cloud, unchanged -->
+  <!-- A head is 15 px long with the line ending 7/10 into it, so its tip is 4.5 px past the line's end: every line
+       ends 4.5 px before the border it points at. -->
+  <path d="M295 178 q0 -62 70 -72 h424.5" fill="none" stroke="#7a8794" stroke-width="3" marker-end="url(#grey)"/>
+  <text x="560" y="94" text-anchor="middle" font-size="13" fill="#57606a">the module keeps sending its data to Renac's cloud, as before</text>
+  <path d="M790 118 a26 26 0 0 1 40 -24 a30 30 0 0 1 56 6 a22 22 0 0 1 6 44 h-100 a20 20 0 0 1 -2 -26z" fill="#fff" stroke="#6f7f99" stroke-width="2.5"/>
+  <text x="840" y="128" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">Renac's cloud</text>
+
+  <!-- Relay -->
+  <rect x="440" y="160" width="180" height="110" rx="12" fill="#fff" stroke="#8e5bd9" stroke-width="2.5"/>
+  <rect x="462" y="182" width="60" height="36" rx="4" fill="#f1ebfb" stroke="#8e5bd9" stroke-width="2"/>
+  <path d="M7 7 L17 17 L12 22 V2 L17 7 L7 17" fill="none" stroke="#8e5bd9" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(480 188)"/>
+  <text x="572" y="198" text-anchor="middle" font-weight="600" fill="#24292f">w2b relay</text>
+  <text x="572" y="216" text-anchor="middle" font-size="13" fill="#57606a">ESP32 board</text>
+  <text x="530" y="292" text-anchor="middle" font-size="13" fill="#57606a">in Bluetooth range of the inverter</text>
+
+  <!-- Home Assistant -->
+  <rect x="760" y="160" width="170" height="110" rx="12" fill="#fff" stroke="#1a9bd7" stroke-width="2.5"/>
+  <path d="M845 174 l40 36 h-11 v27 h-58 v-27 h-11z" fill="#e3f4fc" stroke="#1a9bd7" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="838" y="219" width="14" height="18" fill="#1a9bd7"/>
+  <text x="845" y="258" text-anchor="middle" font-weight="600" fill="#24292f">Home Assistant</text>
+
+  <!-- HA -> relay, TCP -->
+  <line x1="760" y1="215" x2="624.5" y2="215" stroke="#8e5bd9" stroke-width="3.5" marker-end="url(#purple)"/>
+  <text x="690" y="203" text-anchor="middle" font-size="13" fill="#8e5bd9" font-weight="600">TCP, port 8899</text>
+  <text x="690" y="238" text-anchor="middle" font-size="13" fill="#8e5bd9">every 30 s</text>
+  <!-- Relay -> module, Bluetooth -->
+  <line x1="440" y1="215" x2="364.5" y2="215" stroke="#8e5bd9" stroke-width="3.5" stroke-dasharray="4 7" stroke-linecap="round" marker-end="url(#purple)"/>
+  <text x="400" y="203" text-anchor="middle" font-size="13" fill="#8e5bd9" font-weight="600">Bluetooth</text>
+
+  <!-- Notes -->
+  <rect x="40" y="320" width="420" height="112" rx="10" fill="#f1ebfb" stroke="#8e5bd9" stroke-width="2"/>
+  <text x="60" y="346" font-weight="600" fill="#5b2fa6">What you need</text>
+  <text x="60" y="368" font-size="13" fill="#57606a">An ESP32 board with the w2b relay firmware, placed so that it</text>
+  <text x="60" y="386" font-size="13" fill="#57606a">sees the module's Bluetooth well: -70 dBm or better on its page.</text>
+  <text x="60" y="404" font-size="13" fill="#57606a">A rule on the relay for the module's service FEE7: one TCP port,</text>
+  <text x="60" y="422" font-size="13" fill="#57606a">8899 by default. Home Assistant connects to that port.</text>
+
+  <rect x="490" y="320" width="430" height="112" rx="10" fill="#fff8e6" stroke="#d9a21b" stroke-width="2"/>
+  <text x="510" y="346" font-weight="600" fill="#9a6700">Good to know</text>
+  <text x="510" y="368" font-size="13" fill="#57606a">The module has one Bluetooth connection. While the relay holds</text>
+  <text x="510" y="386" font-size="13" fill="#57606a">it, the Renac app cannot connect over Bluetooth. The app's cloud</text>
+  <text x="510" y="404" font-size="13" fill="#57606a">mode keeps working. With "connect on demand" the relay frees</text>
+  <text x="510" y="422" font-size="13" fill="#57606a">the link between readings; each reading then takes a few seconds.</text>
+</svg>

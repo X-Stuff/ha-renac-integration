@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">
+  <defs>
+    <marker id="dark" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57606a"/></marker>
+  </defs>
+
+  <rect x="1" y="1" width="958" height="428" rx="16" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="32" y="44" font-size="22" font-weight="600" fill="#24292f">The setup, step by step</text>
+  <text x="300" y="44" font-size="16" fill="#57606a">Settings, Devices &amp; services, Add integration, Renac local</text>
+
+  <!-- Step 1 -->
+  <rect x="32" y="80" width="200" height="120" rx="12" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <circle cx="56" cy="104" r="14" fill="#2f9e8f"/><text x="56" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">1</text>
+  <text x="78" y="109" font-weight="600" fill="#24292f">Find the module</text>
+  <text x="48" y="136" font-size="13" fill="#57606a">Home Assistant searches your</text>
+  <text x="48" y="154" font-size="13" fill="#57606a">network and lists the modules.</text>
+  <text x="48" y="172" font-size="13" fill="#57606a">Not found? Type its IP address.</text>
+
+  <!-- Step 2 -->
+  <rect x="262" y="80" width="200" height="120" rx="12" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <circle cx="286" cy="104" r="14" fill="#2f9e8f"/><text x="286" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">2</text>
+  <text x="308" y="109" font-weight="600" fill="#24292f">Where does it send?</text>
+  <text x="278" y="136" font-size="13" fill="#57606a">The module says which cloud</text>
+  <text x="278" y="154" font-size="13" fill="#57606a">address it uses. Home Assistant</text>
+  <text x="278" y="172" font-size="13" fill="#57606a">keeps it. Nothing changes yet.</text>
+
+  <!-- Step 3 -->
+  <rect x="492" y="80" width="200" height="120" rx="12" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <circle cx="516" cy="104" r="14" fill="#2f9e8f"/><text x="516" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">3</text>
+  <text x="538" y="109" font-weight="600" fill="#24292f">Choose the way</text>
+  <text x="508" y="136" font-size="13" fill="#1a9bd7" font-weight="600">Cloud relay</text>
+  <text x="508" y="154" font-size="13" fill="#8e5bd9" font-weight="600">TCP polling</text>
+  <text x="508" y="172" font-size="13" fill="#57606a">Both, or set up later</text>
+
+  <!-- Done -->
+  <rect x="722" y="80" width="206" height="120" rx="12" fill="#fff" stroke="#2da44e" stroke-width="2.5"/>
+  <circle cx="746" cy="104" r="14" fill="#2da44e"/><text x="746" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">✓</text>
+  <text x="768" y="109" font-weight="600" fill="#24292f">Done</text>
+  <text x="738" y="136" font-size="13" fill="#57606a">The inverter's device and its</text>
+  <text x="738" y="154" font-size="13" fill="#57606a">entities appear within a minute,</text>
+  <text x="738" y="172" font-size="13" fill="#57606a">and the Renac dashboard too.</text>
+
+  <!-- Arrows between steps -->
+  <!-- A head is 15 px long with the line ending 7/10 into it, so its tip is 4.5 px past the line's end: every line
+       ends 4.5 px before the border it points at. -->
+  <line x1="232" y1="140" x2="257.5" y2="140" stroke="#57606a" stroke-width="3" marker-end="url(#dark)"/>
+  <line x1="462" y1="140" x2="487.5" y2="140" stroke="#57606a" stroke-width="3" marker-end="url(#dark)"/>
+  <line x1="692" y1="140" x2="717.5" y2="140" stroke="#57606a" stroke-width="3" marker-end="url(#dark)"/>
+
+  <!-- Branch: cloud relay -->
+  <line x1="560" y1="200" x2="560" y2="227.5" stroke="#1a9bd7" stroke-width="3" marker-end="url(#dark)"/>
+  <rect x="250" y="232" width="460" height="80" rx="10" fill="#e3f4fc" stroke="#1a9bd7" stroke-width="2"/>
+  <text x="268" y="256" font-size="13" font-weight="600" fill="#0b6aa0">Cloud relay: the port, Home Assistant's address, then the warning</text>
+  <text x="268" y="278" font-size="13" fill="#57606a">⚠ Change the module's firmware setting. The module then sends its data to</text>
+  <text x="268" y="296" font-size="13" fill="#57606a">Home Assistant, which waits up to 30 s for it to connect.</text>
+
+  <!-- Branch: TCP polling -->
+  <line x1="560" y1="312" x2="560" y2="331.5" stroke="#8e5bd9" stroke-width="3" marker-end="url(#dark)"/>
+  <rect x="250" y="336" width="460" height="80" rx="10" fill="#f1ebfb" stroke="#8e5bd9" stroke-width="2"/>
+  <text x="268" y="360" font-size="13" font-weight="600" fill="#5b2fa6">TCP polling: the relay's address and port, then a test</text>
+  <text x="268" y="382" font-size="13" fill="#57606a">Next connects through the relay and shows the inverter's model and</text>
+  <text x="268" y="400" font-size="13" fill="#57606a">serial number. Finish creates the inverter.</text>
+
+  <!-- Side notes -->
+  <text x="32" y="262" font-size="13" fill="#57606a">With "Both", the cloud relay</text>
+  <text x="32" y="280" font-size="13" fill="#57606a">comes first, TCP polling after.</text>
+  <text x="32" y="366" font-size="13" fill="#57606a">Every step has a way back.</text>
+  <text x="32" y="384" font-size="13" fill="#57606a">Nothing changes on the module</text>
+  <text x="32" y="402" font-size="13" fill="#57606a">before you agree to it.</text>
+  <text x="724" y="262" font-size="13" fill="#57606a">Or leave the module as it is</text>
+  <text x="724" y="280" font-size="13" fill="#57606a">and redirect it in your router.</text>
+  <text x="724" y="366" font-size="13" fill="#57606a">A failed test can be ignored:</text>
+  <text x="724" y="384" font-size="13" fill="#57606a">the entry waits for the relay.</text>
+</svg>

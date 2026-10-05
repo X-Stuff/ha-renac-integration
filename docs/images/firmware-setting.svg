@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="330" viewBox="0 0 960 330" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">
+  <defs>
+    <marker id="grey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7a8794"/></marker>
+    <marker id="blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1a9bd7"/></marker>
+    <marker id="red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#cf222e"/></marker>
+  </defs>
+
+  <rect x="1" y="1" width="958" height="328" rx="16" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="32" y="44" font-size="22" font-weight="600" fill="#24292f">The module's "socket B": the one address it sends its data to</text>
+
+  <!-- The cloud: 72 wide from its start, its right side bulging 5 px past that. Every arrow's line ends 4.5 px
+       before the border it points at, where the head's tip lands. -->
+
+  <!-- Panel 1: before -->
+  <rect x="32" y="72" width="276" height="226" rx="12" fill="#fff" stroke="#d0d7de" stroke-width="2"/>
+  <text x="170" y="100" text-anchor="middle" font-weight="600" fill="#24292f">Before</text>
+  <rect x="50" y="130" width="90" height="50" rx="8" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <text x="95" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">module</text>
+  <path d="M212 160 a18 18 0 0 1 28 -16 a21 21 0 0 1 40 4 a22 22 0 0 1 4 32 h-70 a14 14 0 0 1 -2 -20z" fill="#fff" stroke="#6f7f99" stroke-width="2.5"/>
+  <text x="248" y="167" text-anchor="middle" font-size="12" font-weight="600" fill="#24292f">cloud</text>
+  <line x1="140" y1="158" x2="208" y2="158" stroke="#7a8794" stroke-width="3" marker-end="url(#grey)"/>
+  <text x="170" y="222" text-anchor="middle" font-size="13" fill="#57606a">socket B = Renac's cloud</text>
+  <text x="170" y="242" text-anchor="middle" font-size="13" fill="#57606a">germany.le-pv.com:20145</text>
+  <text x="170" y="270" text-anchor="middle" font-size="13" fill="#2da44e">The Renac app gets its data.</text>
+
+  <!-- Panel 2: with the cloud relay -->
+  <rect x="318" y="72" width="322" height="226" rx="12" fill="#fff" stroke="#1a9bd7" stroke-width="2"/>
+  <text x="479" y="100" text-anchor="middle" font-weight="600" fill="#1a9bd7">With the cloud relay</text>
+  <rect x="345" y="130" width="76" height="50" rx="8" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <text x="383" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">module</text>
+  <rect x="445" y="130" width="60" height="50" rx="8" fill="#e3f4fc" stroke="#1a9bd7" stroke-width="2.5"/>
+  <text x="475" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#0b6aa0">HA</text>
+  <path d="M539 160 a18 18 0 0 1 28 -16 a21 21 0 0 1 40 4 a22 22 0 0 1 4 32 h-70 a14 14 0 0 1 -2 -20z" fill="#fff" stroke="#6f7f99" stroke-width="2.5"/>
+  <text x="575" y="167" text-anchor="middle" font-size="12" font-weight="600" fill="#24292f">cloud</text>
+  <line x1="421" y1="155" x2="440.5" y2="155" stroke="#1a9bd7" stroke-width="3" marker-end="url(#blue)"/>
+  <line x1="505" y1="158" x2="535" y2="158" stroke="#7a8794" stroke-width="3" marker-end="url(#grey)"/>
+  <text x="479" y="222" text-anchor="middle" font-size="13" fill="#57606a">socket B = Home Assistant</text>
+  <text x="479" y="242" text-anchor="middle" font-size="13" fill="#57606a">homeassistant.local:20145</text>
+  <text x="479" y="270" text-anchor="middle" font-size="13" fill="#2da44e">The app still gets its data, through HA.</text>
+
+  <!-- Panel 3: after a removal without setting it back -->
+  <rect x="650" y="72" width="298" height="226" rx="12" fill="#fff" stroke="#cf222e" stroke-width="2"/>
+  <text x="799" y="100" text-anchor="middle" font-weight="600" fill="#cf222e">Integration removed, setting kept</text>
+  <rect x="664" y="130" width="76" height="50" rx="8" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <text x="702" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">module</text>
+  <rect x="764" y="130" width="60" height="50" rx="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="794" y="160" text-anchor="middle" font-size="13" fill="#8c959f">HA</text>
+  <path d="M852 160 a18 18 0 0 1 28 -16 a21 21 0 0 1 40 4 a22 22 0 0 1 4 32 h-70 a14 14 0 0 1 -2 -20z" fill="#fff" stroke="#6f7f99" stroke-width="2.5"/>
+  <text x="888" y="167" text-anchor="middle" font-size="12" font-weight="600" fill="#24292f">cloud</text>
+  <line x1="740" y1="155" x2="759.5" y2="155" stroke="#cf222e" stroke-width="3" marker-end="url(#red)"/>
+  <line x1="830" y1="141" x2="846" y2="169" stroke="#cf222e" stroke-width="3"/><line x1="846" y1="141" x2="830" y2="169" stroke="#cf222e" stroke-width="3"/>
+  <text x="799" y="222" text-anchor="middle" font-size="13" fill="#57606a">socket B still = Home Assistant,</text>
+  <text x="799" y="242" text-anchor="middle" font-size="13" fill="#57606a">but nobody listens there.</text>
+  <text x="799" y="270" text-anchor="middle" font-size="13" fill="#cf222e">The app gets no new data.</text>
+
+  <text x="32" y="320" font-size="13" fill="#57606a">Before you remove the integration: Configure, Set the cloud URL, back to Renac's cloud. After a removal Home Assistant checks the setting and warns you.</text>
+</svg>

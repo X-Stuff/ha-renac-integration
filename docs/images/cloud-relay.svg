@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="410" viewBox="0 0 960 410" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16">
+  <defs>
+    <marker id="grey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7a8794"/></marker>
+    <marker id="blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1a9bd7"/></marker>
+  </defs>
+
+  <rect x="1" y="1" width="958" height="408" rx="16" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2"/>
+  <text x="32" y="44" font-size="22" font-weight="600" fill="#1a9bd7">Cloud relay</text>
+  <text x="170" y="44" font-size="16" fill="#57606a">the module sends its data to Home Assistant, which passes it on to Renac's cloud</text>
+
+  <!-- The diagram and the notes, 50 px closer to the title than their coordinates say. -->
+  <g transform="translate(0 -50)">
+  <!-- Inverter with module -->
+  <rect x="40" y="150" width="170" height="130" rx="12" fill="#fff" stroke="#e07b39" stroke-width="2.5"/>
+  <rect x="66" y="170" width="118" height="56" rx="6" fill="#fdf0e6" stroke="#e07b39" stroke-width="2"/>
+  <path d="M80 200 q14 -16 28 0 t28 0 t28 0" fill="none" stroke="#e07b39" stroke-width="3" stroke-linecap="round"/>
+  <text x="125" y="252" text-anchor="middle" font-weight="600" fill="#24292f">Inverter</text>
+  <rect x="230" y="178" width="130" height="74" rx="10" fill="#fff" stroke="#2f9e8f" stroke-width="2.5"/>
+  <line x1="210" y1="215" x2="230" y2="215" stroke="#57606a" stroke-width="3"/>
+  <line x1="340" y1="178" x2="340" y2="152" stroke="#2f9e8f" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="340" cy="149" r="4" fill="#2f9e8f"/>
+  <text x="295" y="210" text-anchor="middle" font-weight="600" fill="#24292f">WiFi module</text>
+  <text x="295" y="230" text-anchor="middle" font-size="13" fill="#57606a">HF-LPT270</text>
+
+  <!-- Home Assistant -->
+  <rect x="490" y="150" width="190" height="130" rx="12" fill="#fff" stroke="#1a9bd7" stroke-width="2.5"/>
+  <path d="M585 166 l44 40 h-12 v30 h-64 v-30 h-12z" fill="#e3f4fc" stroke="#1a9bd7" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="577" y="216" width="16" height="20" fill="#1a9bd7"/>
+  <text x="585" y="258" text-anchor="middle" font-weight="600" fill="#24292f">Home Assistant</text>
+
+  <!-- Cloud and app -->
+  <path d="M780 220 a36 36 0 0 1 54 -32 a42 42 0 0 1 78 9 a30 30 0 0 1 9 59 h-136 a27 27 0 0 1 -5 -36z" fill="#fff" stroke="#6f7f99" stroke-width="2.5"/>
+  <text x="850" y="222" text-anchor="middle" font-weight="600" fill="#24292f">Renac's cloud</text>
+  <text x="850" y="240" text-anchor="middle" font-size="13" fill="#57606a">and the Renac app</text>
+
+  <!-- Module -> HA, port 20145 -->
+  <!-- A head is 15 px long with the line ending 7/10 into it, so its tip is 4.5 px past the line's end: every line
+       ends 4.5 px before the border it points at. -->
+  <line x1="360" y1="200" x2="485.5" y2="200" stroke="#1a9bd7" stroke-width="3.5" marker-end="url(#blue)"/>
+  <text x="424" y="188" text-anchor="middle" font-size="13" fill="#1a9bd7" font-weight="600">port 20145</text>
+  <!-- HA reads on the same connection -->
+  <line x1="490" y1="236" x2="364.5" y2="236" stroke="#1a9bd7" stroke-width="3.5" marker-end="url(#blue)"/>
+  <text x="424" y="258" text-anchor="middle" font-size="13" fill="#1a9bd7">HA reads the inverter</text>
+  <text x="424" y="274" text-anchor="middle" font-size="13" fill="#1a9bd7">on this connection</text>
+
+  <!-- HA <-> cloud -->
+  <line x1="684.5" y1="215" x2="776.5" y2="215" stroke="#7a8794" stroke-width="3" marker-start="url(#grey)" marker-end="url(#grey)"/>
+  <text x="729" y="203" text-anchor="middle" font-size="13" fill="#57606a">internet</text>
+
+  <!-- Notes -->
+  <rect x="40" y="320" width="420" height="112" rx="10" fill="#fff8e6" stroke="#d9a21b" stroke-width="2"/>
+  <text x="60" y="346" font-weight="600" fill="#9a6700">A setting in the module's firmware changes</text>
+  <text x="60" y="368" font-size="13" fill="#57606a">The module has one address it sends its data to, "socket B".</text>
+  <text x="60" y="386" font-size="13" fill="#57606a">The setup points it at Home Assistant instead of Renac's cloud.</text>
+  <text x="60" y="404" font-size="13" fill="#57606a">Removing the integration does not change it back: use</text>
+  <text x="60" y="422" font-size="13" fill="#57606a">Configure, Set the cloud URL first.</text>
+
+  <rect x="490" y="320" width="430" height="112" rx="10" fill="#e3f4fc" stroke="#1a9bd7" stroke-width="2"/>
+  <text x="510" y="346" font-weight="600" fill="#0b6aa0">What the cloud still gets</text>
+  <text x="510" y="368" font-size="13" fill="#57606a">Everything it asks for. Recent values are answered by</text>
+  <text x="510" y="386" font-size="13" fill="#57606a">Home Assistant itself, the rest goes to the inverter.</text>
+  <text x="510" y="404" font-size="13" fill="#57606a">The cloud may set the inverter's clock. Other changes from</text>
+  <text x="510" y="422" font-size="13" fill="#57606a">the cloud are blocked unless you allow them in Settings.</text>
+  </g>
+</svg>

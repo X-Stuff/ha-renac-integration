@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# HA dev config, if ever used locally
+config/
+
+# The cloud relay tool's log, written in the folder it runs from
+cloud_relay.log
+
+# OS
+Thumbs.db
+.DS_Store

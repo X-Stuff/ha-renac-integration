@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The repo root for the integration (custom_components.renac_local), the integration folder for the bare renac_protocol.
+pythonpath = [".", "custom_components/renac_local"]
+asyncio_mode = "auto"
+markers = ["network: asks Google's DNS 8.8.8.8 over the internet; -m \"not network\" leaves these out"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 160
+src = [".", "custom_components/renac_local"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "ASYNC", "SIM"]

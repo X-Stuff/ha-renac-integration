@@ -1,0 +1,9 @@
+pytest>=8.3
+pytest-asyncio>=0.24
+ruff>=0.6
+
+# The fake HF-LPT270 (tests/mocks/mock_hf_lpt270.py) is a Bluetooth peripheral: bless. The PyPI release 0.3.0 pins WinRT
+# packages that the bleak it needs refuses on Python 3.12 and later; master (2026-04-11) pins the ones bleak uses.
+bless @ git+https://github.com/kevincar/bless@55a1549742f02d160d40a34284b524c497e02420
+# bless imports it on Windows without listing it (PyPI takes no git dependencies); from GitHub as bless's README says, git on PATH.
+pysetupdi @ git+https://github.com/gwangyi/pysetupdi ; platform_system == "Windows"

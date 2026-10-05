@@ -1,0 +1,318 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Renac inverter",
+        "description": "This connects your Renac inverter to Home Assistant. Home Assistant talks to the inverter's WiFi module in your home network.\n\n![How the inverter talks today, and the two places Home Assistant can read it]({image})\n\nThere are two ways to get the data. You can use one or both:\n- **Cloud relay**: the module sends its data to Home Assistant. Home Assistant sends it on to Renac's cloud, so the Renac app still works.\n- **TCP polling**: Home Assistant connects to an address and asks the inverter for data. By default the inverter ignores what comes in on port 8899, where its module listens, so you need a Bluetooth to TCP relay, like the [w2b relay]({ble_relay_url}).\n\nPress Next to search your network for the module. This takes a few seconds.\n\nNothing changes on the module unless you agree later."
+      },
+      "pick": {
+        "title": "Choose the WiFi module",
+        "description": "Modules found: {count}.{added}\n\nIf your module is not in the list:\n- Search again: sometimes a module does not answer the search.\n- Or choose Other IP address and type it. Your router's list of devices shows it.",
+        "data": {
+          "choice": "Module",
+          "ip": "IP address"
+        },
+        "data_description": {
+          "ip": "Only for \"Other IP address\". Example: _192.168.1.20_"
+        }
+      },
+      "probe": {
+        "title": "The module does not answer",
+        "description": "There is no answer from _{ip}_.\n- Check the IP address.\n- The module only answers inside its own network, and sometimes not at all.\n\nYou can still use TCP polling. Home Assistant cannot set up the cloud relay with a module that does not answer.",
+        "menu_options": {
+          "probe": "Try again",
+          "pick": "⬅️ Back to the list",
+          "tcp_only": "Continue with TCP polling only",
+          "no_socket_b": "Continue without an answer"
+        }
+      },
+      "no_answer": {
+        "title": "The module does not answer",
+        "description": "Home Assistant asked _{ip}_ where it sends its data, but got no answer:\n- {error}\n\nYou can try again, or choose another module.\n\nOr continue without it: then Home Assistant cannot change where the module sends its data.",
+        "menu_options": {
+          "socket_b": "Try again",
+          "pick": "Choose another module",
+          "no_socket_b": "Continue without it"
+        }
+      },
+      "ways": {
+        "title": "How Home Assistant gets the data",
+        "description": "{cloud}\n\nChoose how Home Assistant gets the data:\n- **Cloud relay**: the module sends its data to Home Assistant. Home Assistant sends it on to Renac's cloud, so the Renac app still works.\n- **TCP polling**: Home Assistant connects to an address and asks the inverter for data.\n- **Both**: the cloud relay first. TCP polling when the module is not connected.\n- **Set up later**: the inverter is added without data. Choose later with Reconfigure.",
+        "menu_options": {
+          "server": "Cloud relay",
+          "client_only": "TCP polling",
+          "both": "Both",
+          "later": "Set up later"
+        }
+      },
+      "sends_to_ha": {
+        "title": "The module sends its data to Home Assistant",
+        "description": "The module sends its data to Home Assistant: _{socket_b}_.\n- Without the cloud relay, this data reaches no one.\n- Then the Renac app gets no data.\n\nYou can set the module back to Renac's cloud. It is usually _germany.le-pv.com:20145_.\n\n⚠️ Setting it back overwrites a setting in the firmware of the inverter's WiFi module.",
+        "menu_options": {
+          "set_cloud_url": "Set the module back to Renac's cloud",
+          "leave_module": "Do not change the module",
+          "ways": "⬅️ Back"
+        }
+      },
+      "server": {
+        "title": "Cloud relay",
+        "description": "{cloud}\n\n![Cloud relay]({image})\n\nThe module sends its data to Home Assistant on this port.\nHome Assistant sends it on to Renac's cloud.",
+        "data": {
+          "port": "Port for the module",
+          "ha_host": "Home Assistant's address"
+        },
+        "data_description": {
+          "port": "Another inverter needs another port, for example 20146.",
+          "ha_host": "The module finds a name like _homeassistant.local_ through your router. If your router does not know this name, type Home Assistant's IP address: _{detected}_"
+        },
+        "sections": {
+          "cloud": {
+            "name": "Renac's Cloud",
+            "data": {
+              "cloud_host": "Cloud address",
+              "cloud_port": "Cloud port",
+              "dns_server": "DNS server"
+            },
+            "data_description": {
+              "cloud_host": "Empty: no cloud. Then the Renac app gets no data.",
+              "dns_server": "An IP address, for example _8.8.8.8_, or the word system."
+            }
+          }
+        }
+      },
+      "point": {
+        "title": "⚠️ Change the module's firmware setting",
+        "description": "**This overwrites a setting in the firmware of the inverter's WiFi module.**\nThe module will send its data to Home Assistant, _{ha}_, and not to _{socket_b}_. It changes at once.\n\n✅ Renac's cloud still gets the data: Home Assistant sends it on.\n\n❗️ If you remove this integration later, the setting does not change back by itself.\n\nOr you can send the module's data to Home Assistant yourself, in your router.\n\n![The module's socket B]({image})",
+        "menu_options": {
+          "point_at_ha": "⚠️ Change the module's firmware setting",
+          "keep": "Do not change the module, I use my router",
+          "server": "⬅️ Back"
+        }
+      },
+      "set_failed": {
+        "title": "The change did not work",
+        "description": "Nothing changed on the module:\n- {error}",
+        "menu_options": {
+          "point_at_ha": "Try again",
+          "keep": "Do not change the module",
+          "server": "⬅️ Back"
+        }
+      },
+      "wait": {
+        "title": "Waiting for the module"
+      },
+      "no_connection": {
+        "title": "The module did not connect",
+        "description": "The module did not connect to Home Assistant within {seconds} seconds.\n- It now sends its data to _{socket_b}_.\n- Until its data reaches Home Assistant, the Renac app gets no new data.\n\nYou can:\n- Wait again.\n- Check the address: the module must find it through your router.\n- Revert: the module sends its data to _{before}_ again, and you can start over.\n\n{result}",
+        "menu_options": {
+          "wait_again": "Wait again",
+          "set_back": "Revert and start over",
+          "keep": "Keep it and continue"
+        }
+      },
+      "client": {
+        "title": "TCP polling",
+        "description": "{note}![TCP polling]({image})\n\nHome Assistant connects to this address and asks the inverter for data.\n\nType the address and port. Next tests the connection.",
+        "data": {
+          "host": "Address",
+          "port": "Port"
+        },
+        "data_description": {
+          "host": "A name or an IP address. Example: _192.168.1.50_"
+        }
+      },
+      "client_test": {
+        "title": "TCP polling: the test",
+        "description": "Home Assistant asked the inverter for data at _{address}_.\n\n{result}",
+        "menu_options": {
+          "finish": "✅ Finish",
+          "test_client": "🔄 Test again",
+          "ignore": "➡️ Ignore and finish",
+          "client": "⬅️ Back",
+          "overview": "⚙️ Settings menu"
+        }
+      },
+      "overview": {
+        "title": "The inverter's settings",
+        "description": "{cloud}\n\n{ways}\n\nChoose what to change:\n- A change is saved when you finish it, and this window closes.\n- If you close this window before, the settings stay as they were.\n- A change to the module's firmware setting stays.",
+        "menu_options": {
+          "server_settings": "☁️ Cloud relay",
+          "client_settings": "🔌 TCP polling",
+          "set_cloud_url": "⚠️ Set the cloud URL",
+          "forget_serial": "❌ Forget the inverter's serial number"
+        }
+      },
+      "server_settings": {
+        "title": "Cloud relay",
+        "description": "The cloud relay is on, port {port}.",
+        "menu_options": {
+          "server": "✏️ Change the settings",
+          "server_off": "⏹️ Turn off the cloud relay",
+          "overview": "⬅️ Back"
+        }
+      },
+      "client_settings": {
+        "title": "TCP polling",
+        "description": "TCP polling is on: _{address}_.",
+        "menu_options": {
+          "client": "✏️ Change the settings",
+          "client_off": "⏹️ Turn off TCP polling",
+          "overview": "⬅️ Back"
+        }
+      },
+      "forget_serial": {
+        "title": "Forget the inverter's serial number",
+        "description": "This entry is set up only for the inverter with serial number {serial}.\n\nForget it if you put in another inverter behind this WiFi module:\n- The entry then takes the serial number of the inverter at the next connection.\n- Forget it saves the settings and closes this window.",
+        "menu_options": {
+          "forget_confirmed": "❌ Forget it",
+          "overview": "⬅️ Back"
+        }
+      },
+      "server_off": {
+        "title": "Turn off the cloud relay",
+        "description": "The module sends its data to Home Assistant: _{socket_b}_.\n- Without the cloud relay, this data reaches no one.\n- Then the Renac app gets no data.\n\n{cloud}\n\n⚠️ Setting it back overwrites a setting in the firmware of the inverter's WiFi module.\n\n{result}",
+        "menu_options": {
+          "cloud_back": "↩️ Set the module back to Renac's cloud",
+          "turn_off": "⏹️ Turn it off, do not change the module",
+          "server_settings": "⬅️ Back"
+        }
+      },
+      "set_cloud_url": {
+        "title": "Set the cloud URL",
+        "description": "**This overwrites a setting in the firmware of the inverter's WiFi module.**\nThe module will send its data to the address you type here. It changes at once.\n\n{socket_b}\n{cloud}",
+        "data": {
+          "cloud_url": "Address and port"
+        },
+        "data_description": {
+          "cloud_url": "A name or an IP address, a colon, then the port. Example: _192.168.1.10:20145_"
+        }
+      }
+    },
+    "progress": {
+      "wait": "The module's setting is changed.\n\nHome Assistant now waits for the module to connect to port {port}. This takes up to {seconds} seconds."
+    },
+    "error": {
+      "gone": "This module is not in the list any more. Choose again.",
+      "not_an_ip": "This is not an IP address. Example: 192.168.1.20",
+      "port_taken": "Another inverter already uses this port. Choose another one, for example 20146.",
+      "client_host": "TCP polling needs an address.",
+      "dns_server": "Type an IP address, for example 8.8.8.8, or the word system.",
+      "bad_host": "This is not a name or an IP address. Example: homeassistant.local",
+      "bad_address": "This is not an address and a port. Example: 192.168.1.10:20145"
+    },
+    "abort": {
+      "reconfigure_successful": "Saved. Home Assistant now uses the new settings."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Renac inverter",
+        "menu_options": {
+          "settings": "Settings",
+          "set_cloud_url": "Set the cloud URL",
+          "rebuild_dashboard": "Rebuild the Renac dashboard"
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "How often Home Assistant reads the inverter, and what it reads.\n- Settings of the cloud relay or of TCP polling are shown only while that way is on.\n- Save restarts the connection to the inverter with the new settings.",
+        "submit": "Save",
+        "data": {
+          "live_interval_s": "Live data: read every",
+          "energy_interval_s": "Energy counters: read every",
+          "settings_interval_s": "Inverter settings: read every",
+          "quiet_time_s": "TCP polling: wait after the cloud's request",
+          "forward_writes": "Cloud relay: pass the cloud's writes to the inverter"
+        },
+        "data_description": {
+          "live_interval_s": "Voltages, currents, powers, the battery, the faults.",
+          "energy_interval_s": "The kWh counters, lifetime and today.",
+          "settings_interval_s": "The inverter's clock, work mode and limits.",
+          "quiet_time_s": "The module's WiFi side and its Bluetooth side share one serial line to the inverter. When the cloud asks the inverter something, Home Assistant waits this long before its next request. 0 turns the wait off.",
+          "forward_writes": "Off: the cloud can set only the inverter's clock. Any other write is blocked, and a notification lists it.\nOn: every write from the cloud reaches the inverter, so the Renac app can change the inverter's settings. Each one goes to the log and to an event, not to the notification."
+        },
+        "sections": {
+          "live_mode": {
+            "name": "Live mode",
+            "description": "Live mode reads the live data faster for a short time. It turns itself off after the time below.",
+            "data": {
+              "live_mode_live_s": "Live data: read every",
+              "live_mode_energy_s": "Energy counters: read every",
+              "live_auto_off_s": "Live mode turns off after"
+            }
+          },
+          "more_groups": {
+            "name": "More registers",
+            "description": "Registers that are off by default. Turn one on and Save: its entities appear. Turn it off and Save: they go.",
+            "data": {
+              "power32": "32-bit powers",
+              "protection": "Protection settings",
+              "protection_interval_s": "Protection settings: read every",
+              "undocumented": "Undocumented registers",
+              "undocumented_interval_s": "Undocumented registers: read every"
+            },
+            "data_description": {
+              "power32": "The battery, meter and house powers as 32-bit values in place of the 16-bit ones, in the same entities. Renac's documents do not list this block; other models may not have it.",
+              "protection": "The grid protection limits, read-only, as diagnostic entities.",
+              "undocumented": "Five registers Renac's cloud reads that Renac's documents do not list."
+            }
+          },
+          "advanced": {
+            "name": "Advanced",
+            "description": "Leave these as they are unless something does not work.",
+            "data": {
+              "reply_timeout_s": "Wait for an answer",
+              "first_reply_timeout_s": "TCP polling: wait for the first answer",
+              "connect_timeout_s": "TCP polling: wait for the connection",
+              "age_intervals": "A value stays valid for",
+              "handshake": "Cloud relay: ask the module who it is",
+              "forward_bad_crc": "Cloud relay: pass frames with a bad checksum to the inverter"
+            },
+            "data_description": {
+              "reply_timeout_s": "How long Home Assistant waits for the inverter's answer to a request. It asks once more, then the group fails.",
+              "first_reply_timeout_s": "How long Home Assistant waits for the first answer after it connects. The first answer can take longer than the others.",
+              "connect_timeout_s": "How long Home Assistant waits for the connection to be accepted.",
+              "age_intervals": "The cloud relay answers the cloud from the values Home Assistant read this many intervals ago or less. For older ones it asks the inverter.",
+              "handshake": "While the cloud is not connected, Home Assistant sends the module the cloud's greeting. The module answers with its serial number, MAC and firmware.",
+              "forward_bad_crc": "Renac's cloud sends one request with a bad checksum in every session. Off: Home Assistant drops it. On: it goes to the inverter as it came."
+            }
+          }
+        }
+      },
+      "set_cloud_url": {
+        "title": "Set the cloud URL",
+        "description": "**This overwrites a setting in the firmware of the inverter's WiFi module.**\nThe module will send its data to the address you type here. It changes at once.\n\n{socket_b}\n{cloud}",
+        "data": {
+          "cloud_url": "Address and port"
+        },
+        "data_description": {
+          "cloud_url": "A name or an IP address, a colon, then the port. Example: _192.168.1.10:20145_"
+        }
+      }
+    },
+    "error": {
+      "bad_address": "This is not an address and a port. Example: 192.168.1.10:20145"
+    },
+    "abort": {
+      "cloud_url_set": "The module now sends its data to _{socket_b}_.",
+      "dashboard_rebuilt": "The Renac dashboard is built again from the inverters' entities.\nYour own changes to it are replaced."
+    }
+  },
+  "issues": {
+    "no_answer": {
+      "title": "The inverter has not answered yet",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "The inverter has not answered yet",
+            "description": "Home Assistant has not read the inverter _{title}_ yet, so it has no entities.\n\nReason: {reasons}.\n\nWhat to check:\n- TCP polling: the address and port are right, and what listens there is on.\n- Cloud relay: the module sends its data to Home Assistant.\n\nThis message goes away when the inverter answers.\n\nPress Next to check the inverter's settings."
+          }
+        },
+        "abort": {
+          "reconfigure": "The inverter's settings open now."
+        }
+      }
+    }
+  }
+}

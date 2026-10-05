@@ -1,0 +1,126 @@
+# A Home Assistant test instance with this integration and the mocks around it: two inverters, each a fake module with
+# a mock relay, the mock cloud and Home Assistant, on a Docker network of their own. Linux or WSL2, from the repo's
+# root, once tests/ha/test.sh has built the test image (tests/ha/Dockerfile):
+#
+#   docker compose -f tests/ha/compose.yaml up -d
+#   docker compose -f tests/ha/compose.yaml logs -f mock-module-1
+#   docker compose -f tests/ha/compose.yaml down        removes the containers
+#   docker compose -f tests/ha/compose.yaml down -v     also the instance's state: its user, its entries
+#
+# On the network renac, 172.31.250.0/24 (change it here where it overlaps a network of the host's):
+#   homeassistant  .10  Home Assistant, homeassistant.local on this network, port 8123, also published on the host's
+#                       8123 (on Windows, localhost:8123 through WSL); server mode listens on 20145. The configuration
+#                       fixtures/ha_config, the integration read-only; the user admin, password admin, with the
+#                       onboarding done (fixtures/ha_config/.storage, copied into the instance's state when it has none
+#                       of its own: at the first `up`, and after `down -v`).
+#   mock-cloud     .20  Renac's cloud as the mock plays it, port 20146: the first poll at every connection, then a
+#                       poll every 300 s; it logs every request and its reply.
+#   mock-module-1  .31  the fake HF-LPT270 of an N3-HV-10.0: socket B dials the mock cloud; its AT side on UDP 48899;
+#                       its link, in place of Bluetooth, on 18898. The inverter's replies go out on both paths.
+#   mock-module-2  .32  the same, of an N3-HV-6.0.
+#   mock-relay-1   .41  the relay, port 8899, bridging its clients to module 1's link.
+#   mock-relay-2   .42  the same, to module 2's link.
+# A broadcast stays on this network: the setup flow's Search finds the two fake modules and nothing else.
+# The test instance's guide: tests/ha/README.md.
+# No service reaches anything but these: Renac's cloud and a real module never.
+name: renac-ha-test
+
+x-mock: &mock
+  image: renac-ha-test:2026.9.2
+  volumes:
+    - ../..:/repo:ro
+  environment:
+    PYTHONUNBUFFERED: "1"
+
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.9.2
+    # The seed's files go in only where the state has none (cp -n), then the image's own start.
+    entrypoint: ["/bin/sh", "-c", "mkdir -p /config/.storage; cp -n /seed/* /config/.storage/; exec /init"]
+    ports:
+      - "8123:8123"
+    networks:
+      renac:
+        ipv4_address: 172.31.250.10
+        # Docker's DNS answers the name, as a router that knows it would: the network has no mDNS.
+        aliases:
+          - homeassistant.local
+    volumes:
+      - config:/config
+      - ../../fixtures/ha_config/configuration.yaml:/config/configuration.yaml:ro
+      - ../../fixtures/ha_config/.storage:/seed:ro
+      - ../../custom_components/renac_local:/config/custom_components/renac_local:ro
+
+  mock-cloud:
+    <<: *mock
+    entrypoint: ["python3", "-m", "tests.mocks.mock_cloud", "--bind", "0.0.0.0", "--port", "20146"]
+    networks:
+      renac:
+        ipv4_address: 172.31.250.20
+
+  mock-module-1:
+    <<: *mock
+    entrypoint:
+      - python3
+      - -m
+      - tests.mocks.mock_hf_lpt270
+      - --tcp
+      - 172.31.250.20:20146
+      - --at-port
+      - "48899"
+      - --link
+      - "18898"
+      - --bind
+      - 0.0.0.0
+      - --model
+      - N3-HV-10.0
+      - --serial
+      - "8301033231001064"
+    networks:
+      renac:
+        ipv4_address: 172.31.250.31
+
+  mock-module-2:
+    <<: *mock
+    entrypoint:
+      - python3
+      - -m
+      - tests.mocks.mock_hf_lpt270
+      - --tcp
+      - 172.31.250.20:20146
+      - --at-port
+      - "48899"
+      - --link
+      - "18898"
+      - --bind
+      - 0.0.0.0
+      - --model
+      - N3-HV-6.0
+      - --serial
+      - "8301063231000206"
+    networks:
+      renac:
+        ipv4_address: 172.31.250.32
+
+  mock-relay-1:
+    <<: *mock
+    entrypoint: ["python3", "-m", "tests.mocks.mock_relay", "--bind", "0.0.0.0", "--port", "8899", "--module", "mock-module-1:18898", "-v"]
+    networks:
+      renac:
+        ipv4_address: 172.31.250.41
+
+  mock-relay-2:
+    <<: *mock
+    entrypoint: ["python3", "-m", "tests.mocks.mock_relay", "--bind", "0.0.0.0", "--port", "8899", "--module", "mock-module-2:18898", "-v"]
+    networks:
+      renac:
+        ipv4_address: 172.31.250.42
+
+networks:
+  renac:
+    ipam:
+      config:
+        - subnet: 172.31.250.0/24
+
+volumes:
+  config:

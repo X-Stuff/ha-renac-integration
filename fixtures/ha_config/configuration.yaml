@@ -1,0 +1,9 @@
+# The configuration of the Home Assistant test instance (tests/ha/compose.yaml): Home Assistant's defaults and this
+# integration's log at debug level. Log in as admin, password admin (.storage, the seed); the integration is added from
+# Settings > Devices & services.
+default_config:
+
+logger:
+  default: info
+  logs:
+    custom_components.renac_local: debug

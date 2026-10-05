@@ -1,0 +1,18 @@
+# HACS's checks of the repository: hacs.json, the manifest, the README, the repository's description and topics on
+# GitHub, on every push and pull request and once a week. The brands check is skipped until the integration is in
+# home-assistant/brands.
+name: HACS
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 3 * * 1"
+jobs:
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hacs/action@main
+        with:
+          category: integration
+          ignore: brands
