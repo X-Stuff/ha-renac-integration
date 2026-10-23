@@ -43,22 +43,32 @@ Other IP address and type it; your router's list of devices shows it.
 Then Home Assistant asks the module which cloud address it uses and keeps
 it as the cloud to relay to.
 
-<p><img src="docs/images/setup-1-start.png" width="440" alt="The first step"></p>
-<p><img src="docs/images/setup-2-modules.png" width="440" alt="The modules found"></p>
+![The first step](docs/images/setup-1-start.png)
+
+![The modules found](docs/images/setup-2-modules.png)
 
 ### Choose the way
 
-### Which one?
+![Cloud relay, TCP polling, both, or later](docs/images/setup-3-ways.png)
 
-<p><img src="docs/images/setup-3-ways.png" width="440" alt="Cloud relay, TCP polling, both, or later"></p>
+**Cloud relay**
 
-| | Cloud relay | TCP polling |
-|---|---|---|
-| Hardware | none | a TCP to Bluetooth bridge, the w2b relay for one |
-| Changes on the module | one setting: the address it sends its data to | none |
-| The Renac app | works through Home Assistant. Changing inverter settings from the app is blocked unless you allow it in Settings | works as before, over the cloud. Its Bluetooth connection is busy while the relay holds the link |
-| When Home Assistant is off | the app gets no new data until it is back | nothing changes for the app |
-| Readings | every 30 s, on the connection the module keeps open | every 30 s; each reading brings the Bluetooth link up, unless the relay keeps it up |
+- Hardware: none.
+- Changes on the module: one setting, the address it sends its data to.
+- The Renac app works through Home Assistant. Changing inverter settings
+  from the app is blocked unless you allow it in Settings.
+- When Home Assistant is off, the app gets no new data until it is back.
+- Readings every 30 s, on the connection the module keeps open.
+
+**TCP polling**
+
+- Hardware: a TCP to Bluetooth bridge, the w2b relay for one.
+- Changes on the module: none.
+- The Renac app works as before, over the cloud. Its Bluetooth connection
+  is busy while the relay holds the link.
+- When Home Assistant is off, nothing changes for the app.
+- Readings every 30 s; each reading brings the Bluetooth link up, unless
+  the relay keeps it up.
 
 With **both**, the cloud relay comes first, and TCP polling reads while
 the module is not connected.
@@ -73,8 +83,9 @@ cloud's traffic on, so the Renac app keeps working. Nothing to buy.
 ![Cloud relay](docs/images/cloud-relay.svg)
 
 
-<p><img src="docs/images/cloud-4-form.png" width="440" alt="The port and Home Assistant's address"></p>
-<p><img src="docs/images/cloud-5-warning.png" width="440" alt="The warning before the module's setting changes"></p>
+![The port and Home Assistant's address](docs/images/cloud-4-form.png)
+
+![The warning before the module's setting changes](docs/images/cloud-5-warning.png)
 
 The port the module connects to, 20145, and Home Assistant's address.
 The module finds a name like `homeassistant.local` only through your
@@ -98,8 +109,9 @@ That is what the w2b relay does.
 
 ![TCP polling](docs/images/tcp-polling.svg)
 
-<p><img src="docs/images/tcp-4-form.png" width="440" alt="The relay's address and port"></p>
-<p><img src="docs/images/tcp-5-test.png" width="440" alt="The test's result"></p>
+![The relay's address and port](docs/images/tcp-4-form.png)
+
+![The test's result](docs/images/tcp-5-test.png)
 
 The relay's address and port, `8899` by default. Next tests the
 connection and shows the inverter's model and serial number, or why not.
@@ -112,7 +124,7 @@ estimate from the voltage, the same its page shows.
 
 ### Done
 
-<p><img src="docs/images/setup-6-done.png" width="440" alt="The inverter's device"></p>
+![The inverter's device](docs/images/setup-6-done.png)
 
 The inverter is named `Renac <module IP>` first, then `Renac <model>
 <serial number>` once it has answered. Its entities appear within a
@@ -120,7 +132,7 @@ minute. If nothing comes after a minute, Settings, Repairs tells you why.
 
 ## What you get
 
-<p><img src="docs/images/dashboard.png" width="880" alt="The Renac dashboard"></p>
+![The Renac dashboard](docs/images/dashboard.png)
 
 The dashboard **Renac** in the sidebar, one tab per inverter: the state,
 the faults, the two ways in, the relay's battery when there is one, and
@@ -138,7 +150,7 @@ your changes.
 
 ## Changing things later
 
-<p><img src="docs/images/menus.png" width="740" alt="The gear opens the Configure menu, the three dots hold Reconfigure"></p>
+![The gear opens the Configure menu, the three dots hold Reconfigure](docs/images/menus.png)
 
 **Configure**, the gear:
 
