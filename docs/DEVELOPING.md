@@ -2,7 +2,8 @@
 
 How the repository is laid out, how the tests run, and the command-line
 tools that read an inverter without Home Assistant. The user's guide is
-the [README](../README.md).
+the [README](../README.md); the decisions behind the design and their
+reasons, [DESIGN.md](DESIGN.md).
 
 ## Layout
 
@@ -78,6 +79,15 @@ it on a Docker network of their own: the mock cloud and two inverters, each
 a fake module dialling the cloud, with its AT side and its link in place of
 Bluetooth, and a mock relay bridging to that link. How to run it and what
 to try: [tests/ha/README.md](../tests/ha/README.md).
+
+On GitHub, `.github/workflows` runs Home Assistant's hassfest (the
+manifest, the strings and translations, the icons) and HACS's checks of
+the repository, on every push and once a week. hassfest runs locally too,
+from the repo's root, in the same image the workflow uses:
+
+```
+docker run --rm -v "$(pwd)"://github/workspace ghcr.io/home-assistant/hassfest
+```
 
 The README's diagrams are hand-written SVG files in `docs/images/`, one
 shared style: a light card, blocks with coloured outlines, the cloud relay

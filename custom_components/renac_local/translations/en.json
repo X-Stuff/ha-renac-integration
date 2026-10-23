@@ -314,5 +314,163 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "inverter_state": {
+        "state": {
+          "wait": "Wait",
+          "check": "Check",
+          "normal": "Normal",
+          "standby": "Standby",
+          "fault": "Fault",
+          "permanent": "Permanent",
+          "update": "Update",
+          "eps_check": "EPS check",
+          "eps": "EPS",
+          "self_test": "Self test",
+          "idle": "Idle"
+        }
+      },
+      "bms_connected": {
+        "state": {
+          "ng": "NG",
+          "ok": "OK"
+        }
+      },
+      "meter_connected": {
+        "state": {
+          "ng": "NG",
+          "ok": "OK"
+        }
+      },
+      "battery_status": {
+        "state": {
+          "sleep": "Sleep",
+          "charge": "Charge",
+          "discharge": "Discharge",
+          "idle": "Idle"
+        }
+      },
+      "system_on": {
+        "state": {
+          "off": "Off",
+          "on": "On"
+        }
+      },
+      "drm0": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "meter1_enabled": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "remote_power_control": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "iso_check": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "gfci_check": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "anti_islanding": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "frequency_protect_restrictive": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "ground_connect_check": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "phase_unbalance": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "bypass_relay": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "work_mode": {
+        "state": {
+          "self_use": "Self use",
+          "force_time_use": "Force time use",
+          "back_up": "Back up",
+          "feed_in_first": "Feed-in first"
+        }
+      },
+      "pf_enable": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "pf_mode": {
+        "state": {
+          "f_stop_off": "F-stop off",
+          "f_stop_on": "F-stop on"
+        }
+      },
+      "pu_enable": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "reactive_mode": {
+        "state": {
+          "none": "None",
+          "fixed_pf": "Fixed PF",
+          "fixed_q": "Fixed Q",
+          "cos_phi_p": "Cos phi (P)",
+          "q_u": "Q(U)"
+        }
+      },
+      "uvrt_enable": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "ovrt_enable": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      },
+      "rocof_enable": {
+        "state": {
+          "disabled": "Disabled",
+          "enabled": "Enabled"
+        }
+      }
+    }
   }
 }

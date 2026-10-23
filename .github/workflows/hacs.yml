@@ -1,6 +1,6 @@
-# HACS's checks of the repository: hacs.json, the manifest, the README, the repository's description and topics on
-# GitHub, on every push and pull request and once a week. The brands check is skipped until the integration is in
-# home-assistant/brands.
+# HACS's checks of the repository: hacs.json, the manifest, the README, the brand folder, the repository's
+# description and topics on GitHub, on every push and pull request and once a week. No check is ignored: HACS's
+# default list takes a repository only when the action passes without ignores.
 name: HACS
 on:
   push:
@@ -15,4 +15,3 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          ignore: brands

@@ -25,10 +25,10 @@
       "battery_status": {
         "default": "mdi:battery-unknown",
         "state": {
-          "Sleep": "mdi:battery-off-outline",
-          "Charge": "mdi:battery-arrow-up",
-          "Discharge": "mdi:battery-arrow-down",
-          "Idle": "mdi:battery"
+          "sleep": "mdi:battery-off-outline",
+          "charge": "mdi:battery-arrow-up",
+          "discharge": "mdi:battery-arrow-down",
+          "idle": "mdi:battery"
         }
       },
       "soh": { "default": "mdi:battery-heart-variant" },
@@ -84,10 +84,10 @@
       "inverter_state": {
         "default": "mdi:state-machine",
         "state": {
-          "Normal": "mdi:check-circle-outline",
-          "Fault": "mdi:alert-circle",
-          "Permanent": "mdi:alert-circle",
-          "Update": "mdi:update"
+          "normal": "mdi:check-circle-outline",
+          "fault": "mdi:alert-circle",
+          "permanent": "mdi:alert-circle",
+          "update": "mdi:update"
         }
       },
       "faults": {

@@ -19,6 +19,7 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, Sen
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from .const import BINARY_KEYS, DEVICE_KEYS
 from .entity import RegisterEntity, RenacEntity, add_when_serial_known, registers_shown
@@ -80,7 +81,9 @@ def sensors(device: InverterDevice) -> list[RenacEntity]:
 
 
 class RegisterSensor(RegisterEntity, SensorEntity):
-    """One register: a number with its unit, an enum's name, or a text."""
+    """One register: a number with its unit, an enum, or a text. An enum's state is the table's name as a key,
+    lowercase with underscores, the form HA wants for the icons' and translations' state keys; the name itself is the
+    translation."""
 
     def __init__(self, device: InverterDevice, register: Register) -> None:
         base, _, phase = register.key.rpartition("_")
@@ -95,7 +98,7 @@ class RegisterSensor(RegisterEntity, SensorEntity):
                 self._attr_state_class = SensorStateClass.MEASUREMENT
         elif register.enum is not None:
             self._attr_device_class = SensorDeviceClass.ENUM
-            self._attr_options = list(register.enum.values())
+            self._attr_options = [slugify(name) for name in register.enum.values()]
 
     @property
     def native_value(self) -> float | int | str | None:
@@ -106,7 +109,7 @@ class RegisterSensor(RegisterEntity, SensorEntity):
             return reading.value
         if self.register.enum is not None:
             # A value the table has no name for is unknown.
-            return reading.text if reading.text in self.register.enum.values() else None
+            return slugify(reading.text) if reading.text in self.register.enum.values() else None
         return reading.text
 
 
@@ -200,12 +203,13 @@ class BatteryStatusSensor(RegisterEntity, SensorEntity):
     """The battery's mode, its request flags as attributes."""
 
     _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = list(BATTERY_MODES.values())
+    _attr_options = [slugify(mode) for mode in BATTERY_MODES.values()]
 
     @property
     def native_value(self) -> str | None:
         reading = self.reading
-        return BATTERY_MODES.get(reading.words[0] & BATTERY_STATUS_MODE_MASK) if reading is not None else None
+        mode = BATTERY_MODES.get(reading.words[0] & BATTERY_STATUS_MODE_MASK) if reading is not None else None
+        return slugify(mode) if mode is not None else None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

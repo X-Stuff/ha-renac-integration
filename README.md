@@ -195,7 +195,8 @@ warns you with a notification when it still points somewhere else.
   goes through the cloud too: by default Home Assistant blocks those
   changes, lets the cloud set the inverter's clock only, and lists what
   it blocked in a notification. Configure, Settings, "pass the cloud's
-  writes" lets them through.
+  writes" lets them through. Every such write, blocked or passed, also
+  fires the event `renac_local_cloud_write`, for your automations.
 - **Home Assistant must stay reachable for the module.** With the cloud
   relay, the module connects to Home Assistant by the address you gave.
   Give Home Assistant a fixed IP address in your router, or a name the
@@ -245,7 +246,8 @@ warns you with a notification when it still points somewhere else.
 
 The code layout, the tests, the test instance with its fake inverter,
 and the command-line tools: [docs/DEVELOPING.md](docs/DEVELOPING.md).
-The protocol as recovered: [docs/PROTOCOL.md](docs/PROTOCOL.md).
+The design and its reasons: [docs/DESIGN.md](docs/DESIGN.md). The
+protocol as recovered: [docs/PROTOCOL.md](docs/PROTOCOL.md).
 
 ## License and credits
 

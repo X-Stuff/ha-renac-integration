@@ -41,6 +41,7 @@ can change that.** Use BLE, or RS485 on the inverter's COM pins.
 | Write characteristic | `0000fed5-…` — selected by `getProperties() == 8` (`PROPERTY_WRITE`) |
 | Indicate characteristic | `0000fed6-…` — selected by `getProperties() == 32`, which is `PROPERTY_INDICATE` (0x20), **not** NOTIFY (0x10). Renac's own constant is named `BLE_INDICATE_CHARACTERISTIC_UUID`. |
 | Config characteristics | `0000fec7-…` / `0000fec8-…` — unused by the Modbus path, but *not* dead: they are Hi-Flying's provisioning channel, driven by the bundled SDK in `com/hiflying/blelink/v1/BleLinker.java` to push WiFi credentials over BLE. Same `fee7` service, different characteristics. |
+| AT characteristic | `0000fed4-…`, Notify and Write No Response — **the module's AT-command channel over BLE** (manual pages 57–58: write `AT+WSSSID`, receive `+ok=...`). The app never touches it. Never write to it: the blocking rule of section 10 applies, and a wrong command hangs the module until a power cycle |
 | `sea_module = AA 55 01 00 00 FE 15 00 00 02 13` | declared in six classes, **dead code**, never sent *by the app*. It is the cloud's module-handshake frame — see section 7 |
 
 ---
@@ -590,6 +591,9 @@ page. The request line is not parsed.
 So port 80 is one hard-coded response. It exposes no settings, reaches no UART,
 and ends the search.
 
+Another N3-HV owner with the same dongle reports the same dead 8899:
+[ha-solarman issue #840](https://github.com/davidrapan/ha-solarman/issues/840).
+
 ---
 
 ## 7. The cloud connection — raw Modbus RTU over outbound TCP
@@ -804,6 +808,28 @@ client that opens the connection to the module gets no answer on this firmware:
 * in both captures the module was the TCP *client*. Nothing inbound reaches the
   UART.
 
+**Socket B can be pointed anywhere without the router.** The module's AT
+side (section 10) holds the cloud endpoint as `AT+SOCKB=TCP,20145,germany.le-pv.com`.
+Set to another host and port, the module dials the new address at once and
+answers Modbus there **without the AA55 handshake**: the handshake only
+carries the module's identity, nothing depends on it. After a drop the
+module dials again by itself, on its own socket timeout.
+
+**How Renac's server behaves**, seen from the other side with a fake module
+dialling the real cloud:
+
+* it polls about every 5 minutes; one poll lasts about 40 s, and a keepalive
+  follows 100 s after it;
+* its first frame, the handshake, comes about 10.6 s after the TCP connection
+  opens; about 0.4 s pass between its requests;
+* after a frame it gets no reply to (its own bad-CRC one) it waits about 10 s;
+  after an exception reply it waits 10 s for some requests and not for others;
+* **it checks the inverter serial**: with a serial it does not know it closes
+  the connection about 0.4 s after the reply to `10000 × 32`, although the
+  `0x0E/0x00` reply before already carried the serial. The module serial is
+  not checked: a random one passes;
+* it writes the clock in the plant's time zone (UTC+8 for Renac's demo plant).
+
 ---
 
 ## 8. Cross-check against "RENAC N3 HV Modbus Protocol V1.00"
@@ -876,6 +902,40 @@ The two documents are complementary. Neither alone is enough to write a client.
 TCP 8899 is silent, so the BLE path — the one the app actually uses and which
 demonstrably works — is the fallback.
 
+Facts about the BLE path, from the HF-LPX70 manual (pages 51, 53, 57–58 and
+105) and the APK, which a bridge has to live with:
+
+* **The app never requests an MTU and treats each indication as the whole
+  reply** (`BlueComm.java`, `onCharacteristicChanged` replaces its buffer,
+  never appends; no `requestMtu` anywhere in the package). Replies up to 233
+  bytes reach the phone in one indication, so the module accepts a large MTU
+  when the central asks for one. A bridge should request its own MTU and must
+  not rely on one indication per reply.
+* **A frame must fit one write.** The module's default connection parameters
+  (`AT+BLECON` default `0016003200200`) are an interval of 20–40 ms, slave
+  latency 0, supervision timeout 2000 ms. A frame split across two GATT writes
+  lands on the UART with a 20–40 ms gap, far longer than Modbus RTU's
+  3.5-character silence: splitting breaks the framing, so the MTU must cover
+  the frame.
+* **UART framing towards the links:** the module ends a UART frame after a
+  configurable silence (`AT+UARTTM`, 10–1000 ms) and at most 1400 bytes, then
+  pushes it to the links. Expect one indication per inverter reply, subject to
+  the MTU.
+* **Broadcast rule** (manual page 53): every byte from the serial port is
+  replicated to every TCP connection or client, and bytes from different
+  connections go to the serial port in sequence. BLE, socket A and socket B
+  all sit on the one UART, so over BLE a listener also sees the cloud's poll
+  replies, and the cloud sees the replies to a BLE client's requests. The
+  integration's client mode treats such frames as the cloud polling and holds
+  its own requests back for a while.
+* **One central at a time.** While a bridge holds the module's BLE link, the
+  Renac phone app cannot connect over Bluetooth; its cloud mode is unaffected.
+  The link stays usable while the cloud's TCP session is up (section 6).
+* **`FEE7` is not a Renac mark.** It is also Tencent's member UUID, WeChat's
+  device service, and other modules advertise it (a `CY1-WL-353` nearby does).
+  The module is recognised by its name, `HF-LPT270`, not by `FEE7`. The manual
+  says the BLE address is the station MAC plus one.
+
 One wrinkle worth knowing before you start. The app finds the module over
 **classic** Bluetooth discovery and matches the name `HF-LPT270` exactly, then
 switches to BLE via `connectGatt()`. A BLE-only scanner sees less. A dual-mode
@@ -893,3 +953,52 @@ So a scanner should rank candidates rather than demand an exact name:
 | name contains `RENAC` or `SOLAR` | 40 |
 
 If nothing scores, look for a strong-RSSI unnamed device near the inverter.
+
+---
+
+## 10. The module's AT side, UDP 48899
+
+The module's own configuration interface, from the manual (pages 71–72 and
+83) and measured on this unit. It changes the module, never the inverter.
+
+1. **Open.** UDP datagrams to the module's IP, port 48899, from any local
+   port; the module answers to the sender's address and port. Send
+   `HF-A11ASSISTHREAD` (17 ASCII bytes, no terminator); the module answers
+   `ip,mac,hostname`, the hostname `SOLAR_WIFI` on this unit. Then send `+ok`
+   (3 bytes, no terminator); no answer comes; the module now takes AT
+   commands from that sender. Sent as a broadcast, the greeting is a
+   discovery: every module on the subnet answers, sometimes more than once,
+   and sometimes not at all, so a search is repeated. The port is
+   subnet-local (section 6).
+2. **Command.** One datagram: `AT+<CMD>` is a query, `AT+<CMD>=<p1,p2,...>` a
+   set, ended by CR (`0x0D`); LF alone does not work. A `,`, `=` or `?` inside
+   a parameter is written `\2C`, `\3D`, `\3F`.
+3. **Reply.** `+ok=<value>` to a query, `+ok` to a set, `+ERR=<code>` on an
+   error, each followed by `CR LF CR LF`. A long reply comes in several
+   datagrams: read until the module has been quiet for 0.4 s; nothing within
+   2 s is no reply. One command at a time, its reply read before the next
+   goes, 100 ms between commands. Error codes: -1 invalid format, -2 command
+   absent on this firmware, -3 wrong operator (usually a missing `=`), -4
+   invalid parameter, -5 not permitted now.
+4. **Close.** `AT+Q` with CR leaves AT mode; no reply is waited for.
+
+**The blocking rule.** On this firmware (`AT+VER` 3.01.22 of 2024-05-27) any
+command that waits for something hangs the module's IP stack until a power
+cycle of the inverter: `AT+SNDB` and `AT+PING` did. Only commands the module
+answers at once from memory are safe. Never send `AT+Z`, `AT+RELD`,
+`AT+TCPDISB=off`, `AT+SEND`, `AT+SNDB`, `AT+RECV`, `AT+RCVB`, `AT+PING`,
+`AT+WSCAN` and the like. The integration sends three things and nothing else:
+the greeting, `AT+SOCKB` (the query, or the set), and `AT+Q`.
+
+**Socket B**, the cloud connection:
+
+| Command | Reply | Effect |
+|---|---|---|
+| `AT+SOCKB` | `+ok=TCP,20145,germany.le-pv.com` as delivered | none, a query |
+| `AT+SOCKB=TCP,<port>,<host>` | `+ok` | **state-changing:** socket B dials `<host>:<port>` from then on, at once; the setting survives a power cycle and nothing sets it back by itself |
+
+`<host>` is an IP address or a name the module's DNS resolves (the original
+value is a name), at most 100 characters.
+
+Over BLE the same AT channel is characteristic `FED4` (section 1). Never write
+to it.

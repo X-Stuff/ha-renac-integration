@@ -4,22 +4,25 @@ the diagnostics with the inverter's serial redacted."""
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.renac_local.const import DOMAIN
 from custom_components.renac_local.diagnostics import async_get_config_entry_diagnostics
 from custom_components.renac_local.relay_battery import battery_percent
 from custom_components.renac_local.renac_protocol.groups import LIVE_GROUP
-from custom_components.renac_local.renac_protocol.register_table import BATTERY_MODES
-from custom_components.renac_local.renac_protocol.registers import fault_summary
+from custom_components.renac_local.renac_protocol.register_table import ALL_REGISTERS, BATTERY_MODES
+from custom_components.renac_local.renac_protocol.registers import Kind, fault_summary
 from tests.ha.common import entry, groups_shown, set_up, state_of, wait_until
 from tests.mocks.mock_hf_lpt270 import Identity, initial_words, random_identity
 from tests.mocks.mock_relay import MockRelay
+from tests.test_integration_files import INTEGRATION
 
 REDACTED = "**REDACTED**"
 
@@ -58,7 +61,8 @@ async def test_the_entities_show_the_readings_until_their_group_fails(hass: Home
         faults = state_of(hass, config, "sensor", "faults")
         assert (faults.state, faults.attributes["fault_1"]) == (fault_summary(readings)[0], "0005")
         battery = state_of(hass, config, "sensor", "battery_status")
-        assert (battery.state, battery.attributes["forced_charge_request"], battery.attributes["balance_charge_request"]) == (BATTERY_MODES[1], True, False)
+        requests = (battery.attributes["forced_charge_request"], battery.attributes["balance_charge_request"])
+        assert (battery.state, *requests) == (slugify(BATTERY_MODES[1]), True, False)
         # The mock's clock stands still at 2026-01-01 00:00:00.
         assert dt_util.parse_datetime(state("clock")) == datetime(2026, 1, 1, tzinfo=dt_util.get_default_time_zone())
         assert (state("meter_connected", "binary_sensor"), state("charge_forbidden", "binary_sensor")) == ("on", "on")
@@ -136,3 +140,16 @@ async def test_the_diagnostics_hide_the_inverter_serial_only(hass: HomeAssistant
     # Client mode closes its connection after every update: the last one is shown, closed, with its counters.
     assert data["connection"]["open"] is False and data["connection"]["requests"]["replies"] > 0
     assert data["groups"]["live"]["error"] is None and data["readings"]["model"] == device.data["model"].text
+
+
+def test_every_enum_state_is_a_key_with_its_name_in_the_translations() -> None:
+    """HA wants an enum's states, the icons' and the translations' state keys, as lowercase slugs: each enum sensor's
+    states are the table's names slugified, the translations give the names back, and a state icon names a state."""
+    strings = json.loads((INTEGRATION / "strings.json").read_text(encoding="utf-8"))["entity"]["sensor"]
+    icons = json.loads((INTEGRATION / "icons.json").read_text(encoding="utf-8"))["entity"]["sensor"]
+    enums = {register.key: register.enum for register in ALL_REGISTERS if register.kind is Kind.ENUM}
+    enums["battery_status"] = BATTERY_MODES
+    assert enums and set(enums) == {key for key, entry in strings.items() if "state" in entry}
+    for key, names in enums.items():
+        assert strings[key]["state"] == {slugify(name): name[0].upper() + name[1:] for name in names.values()}, key
+        assert set(icons.get(key, {}).get("state", {})) <= set(strings[key]["state"]), key
