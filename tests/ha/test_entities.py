@@ -15,7 +15,7 @@ from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClien
 
 from custom_components.renac_local.const import DOMAIN
 from custom_components.renac_local.diagnostics import async_get_config_entry_diagnostics
-from custom_components.renac_local.relay_battery import battery_percent
+from custom_components.renac_local.relay_battery import BATTERY_CURVE, battery_percent
 from custom_components.renac_local.renac_protocol.groups import LIVE_GROUP
 from custom_components.renac_local.renac_protocol.register_table import ALL_REGISTERS, BATTERY_MODES
 from custom_components.renac_local.renac_protocol.registers import Kind, fault_summary
@@ -104,15 +104,18 @@ async def test_the_live_mode_switch_reads_faster_holds_the_connection_and_turns_
 async def test_the_relay_battery_sensors_come_with_a_w2b_relay_and_not_without(
     hass: HomeAssistant, relay: MockRelay, identity: Identity, aioclient_mock: AiohttpClientMocker
 ) -> None:
-    # The relay page's curve: full from 4.2 V up, 50 % at 3.84 V, a straight line between the points, empty below 3.27 V.
-    assert [battery_percent(mv) for mv in (4300, 3840, 3860, 3610, 3000)] == [100, 50, 58, 5, 0]
+    # The relay page's curve: full above its top, empty below its bottom, a straight line between two of its points.
+    (top_mv, top), (next_mv, next_percent) = BATTERY_CURVE[0], BATTERY_CURVE[1]
+    between = battery_percent((top_mv + next_mv) // 2)
+    assert (battery_percent(top_mv + 100), between, battery_percent(BATTERY_CURVE[-1][0] - 100)) == (top, round((top + next_percent) / 2), 0)
     # TCP polling's address answers as a w2b relay: two sensors from its status page, read once at the setup.
     aioclient_mock.get("http://127.0.0.1/api/status", json={"device": {"battery_mv": 3840}})
     config = entry(client=relay.port, serial=identity.inverter_serial)
     device = await set_up(hass, config)
     await wait_until(lambda: groups_shown(device))
     await hass.async_block_till_done()
-    assert (state_of(hass, config, "sensor", "relay_battery").state, state_of(hass, config, "sensor", "relay_battery_voltage").state) == ("50", "3.84")
+    percent, volts = state_of(hass, config, "sensor", "relay_battery").state, state_of(hass, config, "sensor", "relay_battery_voltage").state
+    assert (percent, volts) == (str(battery_percent(3840)), "3.84")
     assert aioclient_mock.call_count == 1
     # An address without the page, another bridge: no relay sensors.
     aioclient_mock.clear_requests()

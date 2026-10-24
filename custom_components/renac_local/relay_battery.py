@@ -23,30 +23,27 @@ LOGGER = logging.getLogger(__name__)
 
 READ_EVERY = timedelta(minutes=5)
 REQUEST_TIMEOUT_S = 10.0
-# A 3.7 V lithium-ion cell at rest, (mV, %) every 5 %, the highest first: flat from 3.75 to 3.85 V, steep at both
-# ends. The relay's own page uses this curve.
+# A 3.7 V lithium-ion cell under the relay's load, (mV, %), the highest first. The load pulls the voltage down, so
+# the data sheets' rest curve reads too low on the relay: here 3.55 V is about 20 % and 3.2 V is empty, a straight
+# line between the points. The relay's own page uses this curve.
 BATTERY_CURVE: tuple[tuple[int, int], ...] = (
     (4200, 100),
     (4150, 95),
-    (4110, 90),
-    (4080, 85),
-    (4020, 80),
-    (3980, 75),
-    (3950, 70),
-    (3910, 65),
-    (3870, 60),
-    (3850, 55),
-    (3840, 50),
-    (3820, 45),
-    (3800, 40),
-    (3790, 35),
-    (3770, 30),
-    (3750, 25),
-    (3730, 20),
-    (3710, 15),
-    (3690, 10),
-    (3610, 5),
-    (3270, 0),
+    (4100, 90),
+    (4050, 85),
+    (4000, 80),
+    (3950, 75),
+    (3900, 70),
+    (3850, 60),
+    (3800, 50),
+    (3750, 40),
+    (3700, 30),
+    (3620, 25),
+    (3550, 20),
+    (3480, 15),
+    (3400, 10),
+    (3300, 5),
+    (3200, 0),
 )
 
 
