@@ -23,27 +23,33 @@ LOGGER = logging.getLogger(__name__)
 
 READ_EVERY = timedelta(minutes=5)
 REQUEST_TIMEOUT_S = 10.0
-# A 3.7 V lithium-ion cell under the relay's load, (mV, %), the highest first. The load pulls the voltage down, so
-# the data sheets' rest curve reads too low on the relay: here 3.55 V is about 20 % and 3.2 V is empty, a straight
-# line between the points. The relay's own page uses this curve.
+# A 3.7 V lithium-ion cell under the relay's load, (mV, %), the highest first. The percent is the run time left, from
+# one measured discharge: 4.0 V to 3.0 V took 24.5 hours, so 1 % is about 15 minutes. Above 4.0 V are the last 5 %
+# (a full cell reads 4.16 V under load, up to 4.2 V on the charger). At 3.0 V the relay goes to sleep. From 3.64 V
+# to 3.50 V the voltage is almost flat for 30 % of the run. A straight line between the points. The relay's own page
+# uses this curve.
 BATTERY_CURVE: tuple[tuple[int, int], ...] = (
     (4200, 100),
-    (4150, 95),
-    (4100, 90),
-    (4050, 85),
-    (4000, 80),
-    (3950, 75),
-    (3900, 70),
-    (3850, 60),
-    (3800, 50),
-    (3750, 40),
-    (3700, 30),
-    (3620, 25),
-    (3550, 20),
-    (3480, 15),
-    (3400, 10),
-    (3300, 5),
-    (3200, 0),
+    (4000, 95),
+    (3940, 90),
+    (3900, 85),
+    (3845, 80),
+    (3815, 75),
+    (3770, 70),
+    (3710, 65),
+    (3670, 60),
+    (3640, 55),
+    (3610, 50),
+    (3590, 45),
+    (3575, 40),
+    (3555, 35),
+    (3535, 30),
+    (3510, 25),
+    (3480, 20),
+    (3440, 15),
+    (3420, 10),
+    (3350, 5),
+    (3000, 0),
 )
 
 
